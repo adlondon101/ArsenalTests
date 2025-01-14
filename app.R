@@ -4,53 +4,59 @@
 # http://github.com/dataprofessor  #
 ####################################
 
-# Modified from Winston Chang, 
-# https://shiny.rstudio.com/gallery/shiny-theme-selector.html
+# Modified from https://shiny.rstudio.com/tutorial/written-tutorial/lesson1/
 
-# Concepts about Reactive programming used by Shiny, 
-# https://shiny.rstudio.com/articles/reactivity-overview.html
-
-# Load R packages
 library(shiny)
-library(shinythemes)
+data(airquality)
 
-
-  # Define UI
-  ui <- fluidPage(theme = shinytheme("cerulean"),
-    navbarPage(
-      # theme = "cerulean",  # <--- To use a theme, uncomment this
-      "My first app",
-      tabPanel("Navbar 1",
-               sidebarPanel(
-                 tags$h3("Input:"),
-                 textInput("txt1", "Given Name:", "John"), #txt1 will be sent to tht server 
-                 textInput("txt2", "Surname:", "Smith"), #txt2 will be sent to tht server 
-                 
-               ), # sidebarPanel
-               mainPanel(
-                            h1("Hello Everyone"),
-                            
-                            h3("Output 1"),
-                            verbatimTextOutput("txtout"), #txtout will be generated from the server
-
-               ) # mainPanel
-               
-      ), # Navbar 1, tabPanel
-      tabPanel("Navbar 2", "This panel is intentionally left blank"),
-      tabPanel("Navbar 3", "This panel is intentionally left blank")
+# Define UI for app that draws a histogram ----
+ui <- fluidPage(
   
-    ) # navbarPage
-  ) # fluidPage
-
+  # App title ----
+  titlePanel("Ozone level!"),
   
-  # Define server function  
-  server <- function(input, output) {
+  # Sidebar layout with input and output definitions ----
+  sidebarLayout(
     
-    output$txtout <- renderText({
-      paste( input$txt1, input$txt2, sep = " " )
-    })
-  } # server
+    # Sidebar panel for inputs ----
+    sidebarPanel(
+      
+      # Input: Slider for the number of bins ----
+      sliderInput(inputId = "bins",
+                  label = "Number of bins:",
+                  min = 1,
+                  max = 50,
+                  value = 30)
+      
+    ),
+    
+    # Main panel for displaying outputs ----
+    mainPanel(
+      
+      # Output: Histogram ----
+      plotOutput(outputId = "distPlot")
+      
+    )
+  )
+)
+
+# Define server logic required to draw a histogram ----
+server <- function(input, output) {
   
 
-  # Create Shiny object
-  shinyApp(ui = ui, server = server)
+  output$distPlot <- renderPlot({
+    
+    x    <- airquality$Ozone
+    x    <- na.omit(x)
+    bins <- seq(min(x), max(x), length.out = input$bins + 1)
+    
+    hist(x, breaks = bins, col = "#75AADB", border = "black",
+         xlab = "Ozone level",
+         main = "Histogram of Ozone level")
+    
+  })
+  
+}
+
+# Create Shiny app ----
+shinyApp(ui = ui, server = server)
