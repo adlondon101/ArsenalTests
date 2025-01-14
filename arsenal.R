@@ -1,7 +1,7 @@
 install.packages("worldfootballR")
 library("worldfootballR")
 install.packages("tidyverse")
-library(worldfootballR)
+
 arsenal_stats <- fb_team_player_stats(
   team_urls = "https://fbref.com/en/squads/18bb7c10/Arsenal-Stats",
   stat_type = "standard",
@@ -54,3 +54,4 @@ ggplot(arsenal_stats, aes(x = xG_Expected,
   geom_point() +
   geom_smooth(method = lm)
 
+#GitHub tests
